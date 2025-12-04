@@ -114,6 +114,11 @@ class ComfyExecutor:
     async def initialize(self):
         """初始化执行器"""
         timeout = httpx.Timeout(timeout=self.timeout)
+        # 禁用 httpx 的 HTTP 请求日志，减少输出
+        import logging
+        httpx_logger = logging.getLogger("httpx")
+        httpx_logger.setLevel(logging.WARNING)
+        
         self.http_client = httpx.AsyncClient(
             base_url=self.base_url,
             timeout=timeout,
@@ -165,11 +170,8 @@ class ComfyExecutor:
             "extra_data": {"workflow": workflow.name},
         }
 
-        # 记录 payload 关键信息（避免输出整个 workflow_data）
-        logger.debug(
-            "Submitting prompt to ComfyUI: workflow=%s, payload: %s", 
-            workflow.name, json.dumps(payload, indent=2, ensure_ascii=False),
-        )
+        # 记录 payload 关键信息（避免输出整个 workflow_data，仅在 debug 模式下输出）
+        logger.debug("Submitting prompt to ComfyUI: workflow=%s", workflow.name)
         response = await self.http_client.post("/prompt", json=payload)
 
         if response.status_code == 400:
@@ -245,7 +247,7 @@ class ComfyExecutor:
             queue_data = await self.fetch_queue()
             running_count = len(queue_data.get("queue_running", []))
             pending_count = len(queue_data.get("queue_pending", []))
-            logger.info("Queue data received: queue_running=%d items, queue_pending=%d items", 
+            logger.debug("Queue data received: queue_running=%d items, queue_pending=%d items", 
                        running_count, pending_count)
             
             def extract_prompt_id_from_item(item: Any) -> Optional[str]:
@@ -283,13 +285,13 @@ class ComfyExecutor:
             # 检查正在执行的任务
             for item in queue_data.get("queue_running", []):
                 if extract_prompt_id_from_item(item) == prompt_id:
-                    logger.info("Found prompt_id %s in running queue", prompt_id)
+                    logger.debug("Found prompt_id %s in running queue", prompt_id)
                     return {"status": "running", "position": 0}
             
             # 检查等待执行的任务
             for idx, item in enumerate(queue_data.get("queue_pending", [])):
                 if extract_prompt_id_from_item(item) == prompt_id:
-                    logger.info("Found prompt_id %s in pending queue at position %d", prompt_id, idx + 1)
+                    logger.debug("Found prompt_id %s in pending queue at position %d", prompt_id, idx + 1)
                     return {"status": "pending", "position": idx + 1}
             
             return None
@@ -428,7 +430,7 @@ class ComfyExecutor:
             image = Image.open(io.BytesIO(image_data))
             image.save(file_path, format="PNG")
 
-            logger.info("Base64 image saved: %s to %s", filename, file_path)
+            logger.debug("Base64 image saved: %s to %s", filename, file_path)
             
             # Verify file exists and is readable
             if not file_path.exists():

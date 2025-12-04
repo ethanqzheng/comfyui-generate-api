@@ -73,20 +73,12 @@ async def _ensure_components(app: web.Application) -> Tuple[WorkflowLoader, Comf
             host = "127.0.0.1"
             port = 9300
         
-        logger.info(
-            "[comfyui-generate-api] initializing components, workflows_dir=%s, comfyui=%s:%s",
-            workflows_dir,
-            host,
-            port,
-        )
+        logger.info("[comfyui-generate-api] initializing components, workflows_dir=%s, comfyui=%s:%s", workflows_dir, host, port)
 
         loader = WorkflowLoader(workflows_dir)
         await loader.initialize()
 
-        executor = ComfyExecutor(
-            host=host,
-            port=port,
-        )
+        executor = ComfyExecutor(host=host, port=port)
         await executor.initialize()
 
         app[COMPONENTS_KEY] = {
@@ -397,8 +389,6 @@ def setup_server() -> None:
     app.router.add_post("/api/upload_files", upload_files_handler)
     app.router.add_get("/api/workflows", list_workflows_handler)
 
-    logger.info(
-        "[comfyui-generate-api] routes registered: /api/generate, /api/workflows, /api/upload_files"
-    )
+    logger.info("[comfyui-generate-api] routes registered: /api/generate, /api/workflows, /api/upload_files")
 
 

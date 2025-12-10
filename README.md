@@ -4,7 +4,7 @@
 
 ### 在 ComfyUI 中作为 custom node 使用
 - 将整个目录放置在 `ComfyUI/custom_nodes/`目录下
-- 默认的 `workflows` 目录使用插件内置的 `workflows/`，也可以通过环境变量 `WORKFLOWS_DIR` 指向其他路径
+- 默认使用`comfyui-generate-api`插件内置的 `workflows` 目录 `ComfyUI/custom_nodes/comfyui-generate-api/workflows/`
 
 ```bash
 # 进入ComfyUI自定义节点
@@ -52,13 +52,3 @@ comfyui-generate-api/
 ├── README.md
 └── requirements.txt
 ```
-
-## 配置说明
-
-如需自定义 workflow 存放位置，可在启动 ComfyUI 前设置：
-
-```bash
-export WORKFLOWS_DIR=/your/custom/workflows
-```
-
-所有配置（输出/输入/模型目录、服务地址/端口）自动从当前运行的 ComfyUI 实例获取，确保与 ComfyUI 原生行为完全一致。

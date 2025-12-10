@@ -1,39 +1,103 @@
 {
+  "1": {
+    "inputs": {
+      "clip_name": "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+      "type": "wan",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "加载CLIP"
+    }
+  },
+  "2": {
+    "inputs": {
+      "vae_name": "wan_2.1_vae.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "加载VAE"
+    }
+  },
   "3": {
     "inputs": {
-      "seed": 635117332536465,
-      "steps": 20,
-      "cfg": 5,
-      "sampler_name": "uni_pc",
-      "scheduler": "simple",
-      "denoise": 1,
+      "unet_name": "wan2.2_t2v_low_noise_14B_fp8_scaled.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "UNet加载器"
+    }
+  },
+  "4": {
+    "inputs": {
+      "unet_name": "wan2.2_t2v_high_noise_14B_fp8_scaled.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "UNet加载器"
+    }
+  },
+  "10": {
+    "inputs": {
+      "lora_name": "wan2.2_t2v_lightx2v_4steps_lora_v1.1_high_noise.safetensors",
+      "strength_model": 1.0000000000000002,
       "model": [
-        "48",
-        0
-      ],
-      "positive": [
-        "6",
-        0
-      ],
-      "negative": [
-        "7",
-        0
-      ],
-      "latent_image": [
-        "55",
+        "4",
         0
       ]
     },
-    "class_type": "KSampler",
+    "class_type": "LoraLoaderModelOnly",
     "_meta": {
-      "title": "KSampler"
+      "title": "LoRA加载器（仅模型）"
     }
   },
-  "6": {
+  "11": {
     "inputs": {
-      "text": "Low contrast. In a retro 1970s-style subway station, a street musician plays in dim colors and rough textures. He wears an old jacket, playing guitar with focus. Commuters hurry by, and a small crowd gathers to listen. The camera slowly moves right, capturing the blend of music and city noise, with old subway signs and mottled walls in the background.",
+      "lora_name": "wan2.2_t2v_lightx2v_4steps_lora_v1.1_low_noise.safetensors",
+      "strength_model": 1.0000000000000002,
+      "model": [
+        "3",
+        0
+      ]
+    },
+    "class_type": "LoraLoaderModelOnly",
+    "_meta": {
+      "title": "LoRA加载器（仅模型）"
+    }
+  },
+  "12": {
+    "inputs": {
+      "shift": 5.000000000000001,
+      "model": [
+        "11",
+        0
+      ]
+    },
+    "class_type": "ModelSamplingSD3",
+    "_meta": {
+      "title": "采样算法（SD3）"
+    }
+  },
+  "13": {
+    "inputs": {
+      "shift": 5.000000000000001,
+      "model": [
+        "10",
+        0
+      ]
+    },
+    "class_type": "ModelSamplingSD3",
+    "_meta": {
+      "title": "采样算法（SD3）"
+    }
+  },
+  "15": {
+    "inputs": {
+      "text": "Beautiful young European woman with honey blonde hair gracefully turning her head back over shoulder, gentle smile, bright eyes looking at camera. Hair flowing in slow motion as she turns. Soft natural lighting, clean background, cinematic slow-motion portrait.",
       "clip": [
-        "38",
+        "1",
         0
       ]
     },
@@ -42,11 +106,88 @@
       "title": "CLIP Text Encode (Positive Prompt)"
     }
   },
-  "7": {
+  "16": {
     "inputs": {
-      "text": "色调艳丽，过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走",
+      "add_noise": "enable",
+      "noise_seed": 479626886260637,
+      "steps": 4,
+      "cfg": 1,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "start_at_step": 0,
+      "end_at_step": 2,
+      "return_with_leftover_noise": "enable",
+      "model": [
+        "13",
+        0
+      ],
+      "positive": [
+        "15",
+        0
+      ],
+      "negative": [
+        "22",
+        0
+      ],
+      "latent_image": [
+        "27",
+        0
+      ]
+    },
+    "class_type": "KSamplerAdvanced",
+    "_meta": {
+      "title": "K采样器（高级）"
+    }
+  },
+  "17": {
+    "inputs": {
+      "fps": 16,
+      "images": [
+        "20",
+        0
+      ]
+    },
+    "class_type": "CreateVideo",
+    "_meta": {
+      "title": "创建视频"
+    }
+  },
+  "18": {
+    "inputs": {
+      "filename_prefix": "video/ComfyUI",
+      "format": "auto",
+      "codec": "auto",
+      "video": [
+        "17",
+        0
+      ]
+    },
+    "class_type": "SaveVideo",
+    "_meta": {
+      "title": "保存视频"
+    }
+  },
+  "20": {
+    "inputs": {
+      "samples": [
+        "28",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE解码"
+    }
+  },
+  "22": {
+    "inputs": {
+      "text": "色调艳丽，过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走，裸露，NSFW",
       "clip": [
-        "38",
+        "1",
         0
       ]
     },
@@ -55,117 +196,49 @@
       "title": "CLIP Text Encode (Negative Prompt)"
     }
   },
-  "8": {
+  "27": {
     "inputs": {
-      "samples": [
-        "3",
+      "width": 640,
+      "height": 640,
+      "length": 81,
+      "batch_size": 1
+    },
+    "class_type": "EmptyHunyuanLatentVideo",
+    "_meta": {
+      "title": "空Latent视频（混元）"
+    }
+  },
+  "28": {
+    "inputs": {
+      "add_noise": "disable",
+      "noise_seed": 0,
+      "steps": 4,
+      "cfg": 1,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "start_at_step": 2,
+      "end_at_step": 4,
+      "return_with_leftover_noise": "disable",
+      "model": [
+        "12",
         0
       ],
-      "vae": [
-        "39",
+      "positive": [
+        "15",
+        0
+      ],
+      "negative": [
+        "22",
+        0
+      ],
+      "latent_image": [
+        "16",
         0
       ]
     },
-    "class_type": "VAEDecode",
+    "class_type": "KSamplerAdvanced",
     "_meta": {
-      "title": "VAE Decode"
-    }
-  },
-  "37": {
-    "inputs": {
-      "unet_name": "wan2.2_ti2v_5B_fp16.safetensors",
-      "weight_dtype": "default"
-    },
-    "class_type": "UNETLoader",
-    "_meta": {
-      "title": "Load Diffusion Model"
-    }
-  },
-  "38": {
-    "inputs": {
-      "clip_name": "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
-      "type": "wan",
-      "device": "default"
-    },
-    "class_type": "CLIPLoader",
-    "_meta": {
-      "title": "Load CLIP"
-    }
-  },
-  "39": {
-    "inputs": {
-      "vae_name": "wan2.2_vae.safetensors"
-    },
-    "class_type": "VAELoader",
-    "_meta": {
-      "title": "Load VAE"
-    }
-  },
-  "48": {
-    "inputs": {
-      "shift": 8,
-      "model": [
-        "37",
-        0
-      ]
-    },
-    "class_type": "ModelSamplingSD3",
-    "_meta": {
-      "title": "ModelSamplingSD3"
-    }
-  },
-  "55": {
-    "inputs": {
-      "width": 1280,
-      "height": 704,
-      "length": 121,
-      "batch_size": 1,
-      "vae": [
-        "39",
-        0
-      ]
-    },
-    "class_type": "Wan22ImageToVideoLatent",
-    "_meta": {
-      "title": "Wan22ImageToVideoLatent"
-    }
-  },
-  "57": {
-    "inputs": {
-      "fps": 24,
-      "images": [
-        "8",
-        0
-      ]
-    },
-    "class_type": "CreateVideo",
-    "_meta": {
-      "title": "Create Video"
-    }
-  },
-  "58": {
-    "inputs": {
-      "filename_prefix": "video/ComfyUI",
-      "format": "auto",
-      "codec": "auto",
-      "video": [
-        "57",
-        0
-      ]
-    },
-    "class_type": "SaveVideo",
-    "_meta": {
-      "title": "Save Video"
-    }
-  },
-  "60": {
-    "inputs": {
-      "unet_name": "wan2.2_ti2v_5B_fp16.safetensors",
-      "weight_dtype": "default"
-    },
-    "class_type": "UNETLoader",
-    "_meta": {
-      "title": "Load Diffusion Model"
+      "title": "K采样器（高级）"
     }
   }
 }
